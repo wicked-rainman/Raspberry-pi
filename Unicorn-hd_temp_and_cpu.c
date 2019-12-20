@@ -57,8 +57,9 @@ void set_pixel(int x, int y, int r, int g, int b) {
     buffer[offset + 1] = g;         // led green value
     buffer[offset + 2] = b;        // led blue value
 }
-int main( int argc, char *argv[] )
-{
+
+
+int main( int argc, char *argv[] )  {
 size_t x;
 int temp,most_temp,least_temp,pixel,load,most_cpu,least_cpu,offset,k,l;
 int red_load,green_load,blue_load,red_temp,green_temp,blue_temp;
@@ -100,7 +101,6 @@ int red_load,green_load,blue_load,red_temp,green_temp,blue_temp;
                 green_load=20;
                 blue_load=0;
         }
-
         for(k=0;k<7;k++) {
                 //Top busy digits
                 for(l=0;l<7;l++) {
@@ -108,7 +108,6 @@ int red_load,green_load,blue_load,red_temp,green_temp,blue_temp;
                         if(map[least_cpu][(k*7)+l] =='#')  set_pixel(l+7,k,red_load,green_load,blue_load);
                 }
         }
-
         for(k=0;k<7;k++) {
                 //Bottom temp digits
                 for(l=0;l<7;l++) {
@@ -116,7 +115,6 @@ int red_load,green_load,blue_load,red_temp,green_temp,blue_temp;
                         if(map[least_temp][(k*7)+l] =='#')  set_pixel(l+7,k+8,red_temp,green_temp,blue_temp);
                 }
         }
-
         wiringPiSPIDataRW( SPI_CHANNEL, buffer, PACKET_SIZE );
         usleep(1000000);
         }
