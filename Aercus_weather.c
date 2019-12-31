@@ -7,18 +7,19 @@
 #include <arpa/inet.h>
 static int wanted_td(char *);
 static int strpos(char *, char *);
+static int connect_ip_socket(char *, int);
 static void extract_values(char *);
-char AbsPress[10];
-char RelPress[10];
-char outTemp[10];
-char outHumi[10];
-char windir[10];
-char avgwind[10];
-char gustspeed[10];
-char solarrad[10];
-char rainofdaily[10];
-char inTemp[10];
-char inHumi[10];
+static char AbsPress[10];
+static char RelPress[10];
+static char outTemp[10];
+static char outHumi[10];
+static char windir[10];
+static char avgwind[10];
+static char gustspeed[10];
+static char solarrad[10];
+static char rainofdaily[10];
+static char inTemp[10];
+static char inHumi[10];
 
 //---------------------------------------------------------------------
 // Program: weather
@@ -36,51 +37,26 @@ char inHumi[10];
 // your arm and use this code, you'll have to change this value as required
 //
 // WR
-//---------------------------------------------------------------------
-int main(int argc, char** argv) {
+//---------------------------------------------------------------------------
+int main() {
 int sockfd=0;
 int bytes_returned;
 int start_pos, end_pos,start_found=0;
 char input_line[9000];
 char temp_line[9000];
 char reply[2048];
-struct sockaddr_in server_address;
 char SERVER_IP[] = "192.168.0.23";
 int PORT=80;
 char GET_REQUEST[]="GET /livedata.htm HTTP/1.1\r\nHost: 192.168.0.23\r\nUser-Agent: curl/7.53.1\r\nAccept: */*\r\nConnection: close\r\n\r\n";
-
-        //
-        // Bit of code to open up a socket on the Aercus
-        //
-        sockfd = socket(AF_INET, SOCK_STREAM, 0);
-        if(sockfd<0) {
-                fprintf(stderr,"\nCould not create new socket!\n");
-                return(EXIT_FAILURE) ;
-        }
-        server_address.sin_family = AF_INET;
-        server_address.sin_port = htons((uint16_t)PORT);
-        if(inet_pton(AF_INET,SERVER_IP,&server_address.sin_addr)<=0) {
-                fprintf(stderr, "\nCould not convert %s to binary\n",SERVER_IP);
-                return(EXIT_FAILURE) ;
-        }
-        if(connect(sockfd,(struct sockaddr *) &server_address,(socklen_t) sizeof(server_address))<0) {
-                fprintf(stderr,"\nCould not connect to %s:%d",SERVER_IP,PORT);
-                return(EXIT_FAILURE) ;
-        }
-        //
-        // Send a GET request to the Aercus
-        //
+        sockfd = connect_ip_socket(SERVER_IP, PORT);
         (void) send(sockfd,GET_REQUEST,strlen(GET_REQUEST),0);
-        //
-        // Start reading the HTML response and parse it out
-        //
         bytes_returned = (int) read(sockfd, reply, 2048);
         input_line[0]=(char) 0x0;
         while(bytes_returned>0) {
                 strncat(input_line,reply,(size_t)bytes_returned);
                 if(start_found == 0) {
                         start_pos=wanted_td(input_line);
-                       if(start_pos>=0) {
+                        if(start_pos>=0) {
                                 start_found=1;
                                 strcpy(temp_line, &input_line[start_pos]);
                                 strcpy(input_line,temp_line);
@@ -100,17 +76,14 @@ char GET_REQUEST[]="GET /livedata.htm HTTP/1.1\r\nHost: 192.168.0.23\r\nUser-Age
                 }
                 bytes_returned = (int) read(sockfd,reply,2048);
         }
-        //
-        // Finished reading replies. Close the socket and output the results I want
-        //
         (void) close(sockfd);
-        printf("\n\nInside temp=%sc, outside temp=%sc, inside humidity=%s, outside humidity=%s\n", inTemp,outTemp, inHumi, outHumi);
+        printf("\n\nInside temp=%sc, outside temp=%sc, inside humidity=%s%, outside humidity=%s%\n", inTemp,outTemp, inHumi, outHumi);
         printf("Wind direction=%s, average wind speed=%smph, wind gusts=%smph\n",windir, avgwind, gustspeed);
-        printf("Barometric pressure=%s, Total rain=%s, radiation level=%s\n",RelPress, rainofdaily, solarrad);
+        printf("Barometric pressure=%smbar, Total rain=%s, radiation level=%s\n",RelPress, rainofdaily, solarrad);
         return (EXIT_SUCCESS);
 }
 //---------------------------------------------------
-// wanted_td
+// wanted_td - Is this cell in the table row wanted?
 //---------------------------------------------------
 int wanted_td(char *input_line) {
 char wanted_fields[11][13] = { "inTemp", "inHumi", "AbsPress", "RelPress", "outTemp", "outHumi", "windir", "avgwind", "gustspeed", "solarrad", "rainofdaily\""};
@@ -163,5 +136,30 @@ int end_of_field=0;
                 printf("Unrecognised values found (%s)\n",fieldname);
                 exit(EXIT_FAILURE);
         }
+}
+//-----------------------------------------------------------------
+// connect_ip_socket
+// Connect to a port on the given IP address (no DNS lookups)  
+//-----------------------------------------------------------------
+
+int connect_ip_socket(char *host_ip, int port) {
+        struct sockaddr_in server_address;
+        int sockfd;
+                sockfd = socket(AF_INET, SOCK_STREAM, 0);
+                if(sockfd<0) {
+                        fprintf(stderr,"\nCould not create new socket!\n");
+                        exit(EXIT_FAILURE) ;
+                }
+                server_address.sin_family = AF_INET;
+                server_address.sin_port = htons((uint16_t)port);
+                if(inet_pton(AF_INET,host_ip,&server_address.sin_addr)<=0) {
+                        fprintf(stderr, "\nCould not convert %s to binary\n",host_ip);
+                        exit(EXIT_FAILURE) ;
+                }
+                if(connect(sockfd,(struct sockaddr *) &server_address,(socklen_t) sizeof(server_address))<0) {
+                        fprintf(stderr,"\nCould not connect to %s:%d",host_ip,port);
+                        exit(EXIT_FAILURE) ;
+                }
+                return (sockfd);
 }
 
