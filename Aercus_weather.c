@@ -79,7 +79,7 @@ char GET_REQUEST[]="GET /livedata.htm HTTP/1.1\r\nHost: 192.168.0.23\r\nUser-Age
         (void) close(sockfd);
         printf("\n\nInside temp=%sc, outside temp=%sc, inside humidity=%s%, outside humidity=%s%\n", inTemp,outTemp, inHumi, outHumi);
         printf("Wind direction=%s, average wind speed=%smph, wind gusts=%smph\n",windir, avgwind, gustspeed);
-        printf("Barometric pressure=%smbar, Total rain=%s, radiation level=%s\n",RelPress, rainofdaily, solarrad);
+        printf("Barometric pressure=%smb, Total rain=%smm, radiation level=%slux\n",RelPress, rainofdaily, solarrad);
         return (EXIT_SUCCESS);
 }
 //---------------------------------------------------
