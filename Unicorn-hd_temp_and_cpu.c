@@ -50,7 +50,7 @@ int cpuload() {
         close(filep);
         return (int)(load * 100);
 }
-
+//----------
 void set_pixel(int x, int y, int r, int g, int b) {
     int offset = 1 + ((y * 16) + x) * 3;
     buffer[offset + 0] = r;         // led red value
