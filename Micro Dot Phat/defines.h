@@ -1,4 +1,5 @@
 #define I2C_DEV "/dev/i2c-1"
+#define I2C_SLAVE	0x0703
 #define MDH_ADR 0x61
 #define DEFAULT_MODE 0x18
 #define CMD_MODE    0x00
