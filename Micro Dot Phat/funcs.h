@@ -1,6 +1,0 @@
-#include "font.h"
-#include "bright.c"
-#include "printchar.c"
-#include "printstr.c"
-#include "reset.c"
-#include "update.c"
