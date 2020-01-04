@@ -1,5 +1,9 @@
 //---------------------------------------------------------------
-// update.c - Update the data register on the three 
+// update.c - Update the data registers on the three IS31FL3730
+// chips using the Update Column register. Null operand.
+// 
+// WR
+//-------------------------------------------------------------
 
 void update(int fd) {
         uint8_t buf[2]={0x0c,0};
