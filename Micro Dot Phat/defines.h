@@ -1,5 +1,4 @@
 #define I2C_DEV "/dev/i2c-1"
-#define I2C_SLAVE 0x0703
 #define DEFAULT_MODE 0x18
 #define CMD_MODE    0x00
 #define CMD_UPDATE  0x0C
