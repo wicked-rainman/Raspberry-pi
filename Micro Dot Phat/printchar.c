@@ -15,7 +15,6 @@ void printchar(int fd, int x, int chr) {
         case '\r':
                 return;
         }
-        printf("Printing %c (%d - 33) = %d\n",chr, chr,(chr-33));
         chr=chr-33;
         if (x % 2) {
                 // Odd numbered character out of the string
