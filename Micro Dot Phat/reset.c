@@ -1,11 +1,13 @@
 //-----------------------------------------------------------------
 // Reset the display
+//
 // Reset the 3 IS31FL3730 chips then set them back in default mode
 // 0xff is the chip Reset register
 // 0x00 is the chip Configuration register:
-// Default mode (0x18) = 0b00011000,sets display mode to use
-// two matrix displays and sets intensity current to be controlled 
-// by the Lighting Effect Register.
+//      Default mode (0x18) = 0b00011000,sets display mode to use
+//      two matrix displays and sets intensity current to be controlled 
+//      by the Lighting Effect Register. Each matrix display is 8x8.
+//
 // Chips have addresses 0x61, 9x62 and 0x63 on the bus. 
 //
 // WR
